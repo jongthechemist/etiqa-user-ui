@@ -1,3 +1,127 @@
+# EtiqaUserUI
+
+This is a technical assignment for Etiqa. It's a frontend SPA that serves the API at https://github.com/jongthechemist/etiqa-user-api.
+
+---
+
+## Setup
+
+Follow these steps to run the application on your local machine:
+
+Pull the repository
+
+`git pull https://github.com/jongthechemist/etiqa-user-ui.git`
+
+Install dependencies
+
+`yarn`
+
+Update the REACT_APP_API_URL in the `.env` file based on where the API you want the UI to serve (localhost or live app).
+
+Run the dev server
+
+`yarn start`
+
+Open http://localhost:3000 to view it in the browser.
+
+---
+
+## Details
+
+### UI Library: React
+
+It is bootstrapped with `create-react-app`. The application is made up of entirely functional components.
+
+### Folder structure
+```
+|-- components: contains all the reusable stateless components
+|-- helpers: utility functions and hooks for the application
+|-- redux: contains the redux slice definitions for application state
+|-- router: base setup for application routes with react-router
+|-- services: API calls with axios
+|-- views: contains main view components that serves as route components
+```
+
+### State Machine
+
+The application uses Redux (`redux` + `react-redux`) to manage the application states.
+
+The state configuration files can be found in `.redux.js` files within the `redux` folder.
+
+To reduce complexity of Redux implementation, it uses `@reduxjs/toolkit` to create state slices (bundles of reducer and action).
+
+A special Redux store `thunk` helps to keep track of asynchronous actions (like network call). It introduces `createAsyncStore` function that wraps around `createAsyncThunk` from `@reduxjs/toolkit`.
+
+### Hooks
+
+Hooks are used to enhance the functional components. There are 5 custom hooks created:
+
+1. `useDispatchAction` returns a function that dispatch the action argument to the Redux store.
+
+```js
+// With useDispatch
+const dispatch = useDispatch()
+dispatch(myActionCreator(arg0, arg1))
+
+// With useDispatchAction
+const dispatchMyAction = useDispatchAction(myActionCreator)
+dispatchMyAction(arg0, arg1)
+```
+
+2. `useStatePath` return a state from Redux store based on the path given with dot notation. It safely returns undefined or a default value if the path doesn't exist.
+
+```js
+// With useSelector
+const value = useSelector((state) => state.mySlice.myValue)
+
+// With useStatePath
+const value = useStatePath('mySlice.myValue')
+```
+
+3. `useAccent` return the accent color. This value is provided by the `ThemeContext.js`
+
+```js
+//With useContext
+const { accent } = useContext(ThemeContext)
+
+//With useAccent
+const accent = useAccent()
+```
+
+4. `useToggle` return a boolean state and a callback to toggle the value between true/false
+
+```js
+//With useState
+const [state, setState] = useState(false)
+setState(currentState => !currentState)
+
+//With useToggle
+const [state, toggle] = useToggle()
+toggle()
+```
+
+5. `useThunkStatus` return the async action status (`pending`, `fulfilled` or `rejected`) and a callback function to clear the status in the thunk redux store. It is useful to show loading state and clearing the status once the component is unmounted.
+
+```js
+//With useThunkStatus
+const [status, clearStatus] = useThunkStatus(myAction)
+const successfulThunk = status === 'fulfilled
+useEffect(() => {
+  if(successfulThunk) clearStatus()
+}, [successfulThunk])
+
+```
+
+### Styling
+It uses SCSS as preprocessor. However, the main bulk of the styling is done with Atomic CSS approach using Bootstrap 4 utility classes.
+Reusable components uses `styled-components` for a more fine-tuned styles. It generate unique classnames for the components.
+
+
+### Unit test
+Some test files are provided as examples of unit test. Run `yarn test` to start unit testing.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
